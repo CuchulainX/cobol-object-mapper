@@ -1,1 +1,4 @@
 tmp
+.build
+bin
+obj
