@@ -10,17 +10,21 @@ using System.Linq;
 namespace Cobol_Object_Mapper {
 
   public class Importer {
+    
     public static void Main(string[] args) {
 
       string input = null;
+      bool   dot   = false;
 
       if(args.Length > 0) {
-        foreach(string filename in args) {
-          if( ! File.Exists(filename) ) {
-            Console.Error.WriteLine("WARNING: Unknown file: " + filename);
+        foreach(string arg in args) {
+          if( arg.Equals("-d") || arg.Equals("--dot") ) {
+            dot = true;
+          } else if( ! File.Exists(arg) ) {
+            Console.Error.WriteLine("WARNING: Unknown file: " + arg);
           } else {
-            Console.Error.WriteLine("*** Importing " + filename);
-            input += System.IO.File.ReadAllText(filename);
+            Console.Error.WriteLine("*** Importing " + arg);
+            input += System.IO.File.ReadAllText(arg);
           }
         }
       }
@@ -38,12 +42,18 @@ namespace Cobol_Object_Mapper {
         Console.Error.WriteLine("ERROR: No input detected.");
         return;
       }
-      
+
       Console.Error.WriteLine("*** Mapping...");
       Mapper mapper = new Mapper();
       mapper.Parse(input);
 
-      Console.WriteLine(mapper.Model.ToString());
+      if(dot) {
+        Console.Error.WriteLine("*** Dumping Dot format");
+        Console.WriteLine(mapper.Model.Dotify());
+      } else {
+        Console.Error.WriteLine("*** Dumping Text format");
+        Console.WriteLine(mapper.Model.ToString());
+      }
     }
 
   }

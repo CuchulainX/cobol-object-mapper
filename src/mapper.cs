@@ -17,11 +17,37 @@ namespace Cobol_Object_Mapper {
     public override string ToString() {
       return string.Join("\n", this.Classes.Select(c => c.ToString()));
     }
+
+    // Graphviz Dot output format support
+
+    public string Dotify() {
+      return @"
+digraph G {
+  node [
+    fontname = ""Bitstream Vera Sans""
+    fontsize = 10
+    shape    = ""record""
+  ]
+
+  edge [
+    fontname  = ""Bitstream Vera Sans""
+    fontsize  = 8
+    arrowhead = ""vee""
+  ]
+  
+" +
+        string.Join("\n", this.Classes.Select(c => c.Dotify()).ToList()) + "\n" +
+        "  edge [ arrowhead = empty ]\n" +
+        string.Join("\n", this.Classes.Select(
+          c => (c.Super != null ? "  " + c.Name.Replace("-", "_") + " -> " + c.Super.Replace("-", "_") : "")
+        ).ToList()) +
+        "\n}\n";
+    }
   }
 
   class Class {
     public string Name                       { get; internal set; }
-    public string Super                       { get; internal set; }
+    public string Super                      { get; internal set; }
     internal Stack<Property> PropertiesStack { get; set; }
     public List<Property> Properties         {
       get {
@@ -46,6 +72,16 @@ namespace Cobol_Object_Mapper {
           "\n" + string.Join("\n", this.Associations.Select(a => a.ToString()))
           : "" );
     }
+
+    public string Dotify() {
+      // Class [
+      //   label = "{Class|+ property : type\l ... |+ method() : void\l}"
+      // ]
+      return "  " + this.Name.Replace("-", "_") + " [\n    label = \"{" + this.Name + "|" +
+        string.Join("", this.Properties.Select(p => p.Dotify())) + 
+        "}\"\n  ]\n" +
+        string.Join("\n", this.Associations.Select(a => a.Dotify())) + "\n";  
+    }
   }
   
   class Property {
@@ -56,9 +92,15 @@ namespace Cobol_Object_Mapper {
       return "  - " + this.Name + " : " +
         ( this.Signed ? "signed " : "") + this.Type;
     }
+
+    public string Dotify() {
+      return "+ " + this.Name + " : " +
+        ( this.Signed ? "signed " : "") + this.Type + "\\l";
+    }  
   }
 
   class Association {
+    public Class Source                   { get; internal set; }
     public string Target                  { get; internal set; }
     public string Multiplicity            { get; internal set; }
     public string DependsOn               { get; internal set; }
@@ -67,6 +109,12 @@ namespace Cobol_Object_Mapper {
         ( this.Multiplicity == null ? "" :
           "[" + this.Multiplicity + "]" +
           ( this.DependsOn == null ? "" : "(" + this.DependsOn + ")" ));
+    }
+
+    public string Dotify() {
+      if(this.Target == null) { return ""; } 
+      return "  " + this.Source.Name.Replace("-", "_") +
+             " -> " + this.Target.Replace("-", "_");
     }
   }
 
@@ -172,12 +220,14 @@ namespace Cobol_Object_Mapper {
               // redefining sub-classes (statement order is important)
               classes.Peek().PropertiesStack.Pop();                    // - prop
               classes.Peek().Associations.Add( new Association() {     // + asso
+                Source = classes.Peek(),
                 Target = imported.Redefines
               });
               classes.Push(new Class() { Name = imported.Redefines }); // + base
             }
           } else {
             classes.Peek().Associations.Add(new Association() {
+              Source       = classes.Peek(),
               Target       = imported.Name,
               Multiplicity = imported.Multiplicity,
               DependsOn    = imported.AmountDependsOn

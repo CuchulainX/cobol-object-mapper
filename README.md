@@ -31,9 +31,10 @@ Given an [example copybook](example.cobol):
 the Cobol Object Mapper generates the following class hierarchy, in the form of an object `Model` constructed from `Class`, `Property` and `Association` classes.
 
 ```bash
-$ make INPUT=example.cobol 
-*** Importing example.cobol
+$ make INPUT=assets/example.cobol
+*** Importing assets/example.cobol
 *** Mapping...
+*** Dumping Text format
 - SUB-LEVEL-1
   - PROPERTY-1 : integer
   - PROPERTY-2 : signed float
@@ -49,3 +50,16 @@ $ make INPUT=example.cobol
   -> SUB-LEVEL-1
   -> SUB-LEVEL-2
 ```
+
+Besides this textual representation, a Graphviz Dot output format is also provided:
+
+```bash
+$ make dot INPUT=assets/example.cobol
+*** Importing assets/example.cobol
+*** Mapping...
+*** Dumping Dot format
+```
+
+This generates a PNG file [`assets/example.cobol.png`](assets/example.cobol.png) (this name can be changed using the `OUTPUT=` Makefile variable):
+
+![Example Visualisation](assets/example.cobol.png)

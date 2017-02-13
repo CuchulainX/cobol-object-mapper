@@ -1,4 +1,5 @@
-INPUT  ?=
+INPUT  ?= assets/example.cobol
+OUTPUT ?= $(INPUT).png
 
 TARGET      = main
 BUILD       = .build
@@ -6,6 +7,7 @@ BUILD       = .build
 CC          = mcs
 RUN         = mono
 NUNIT       = nunit-console -nologo
+DOT         = unflatten -f -l 1 -c 4 | dot -T png -o
 
 ifdef DEBUG
 RUN        += --debug
@@ -19,7 +21,6 @@ endif
 all: run
 
 $(BUILD)/%.exe: src/*.cs
-	@echo "*** building $@"
 	@mkdir -p $(BUILD)
 	@$(CC) $(CFLAGS) -out:$@ $^
 
@@ -33,6 +34,9 @@ $(BUILD)/test.dll: test/test_*.cs src/*.cs
 
 test: $(BUILD)/test.dll
 	@$(NUNIT) $<
+
+dot: $(BUILD)/$(TARGET).exe
+	@$(RUN) $< -d $(INPUT) | $(DOT) $(OUTPUT)
 
 clean:
 	@rm -rf $(BUILD) TestResult.xml
