@@ -39,15 +39,23 @@ digraph G {
         string.Join("\n", this.Classes.Select(c => c.Dotify()).ToList()) + "\n" +
         "  edge [ arrowhead = empty ]\n" +
         string.Join("\n", this.Classes.Select(
-          c => (c.Super != null ? "  " + c.Name.Replace("-", "_") + " -> " + c.Super.Replace("-", "_") : "")
+          c => (c.Super != null ? "  " + c.Id + " -> " + c.Super.Id : "")
         ).ToList()) +
         "\n}\n";
     }
   }
 
-  class Class {
+  abstract class Dottable {
+    private static int count = 0;
+    public string Id { get; private set; }
+    public Dottable() {
+      this.Id = "class" + Dottable.count++;
+    }
+  }
+
+  class Class : Dottable {
     public string Name                       { get; internal set; }
-    public string Super                      { get; internal set; }
+    public Class Super                       { get; internal set; }
     internal Stack<Property> PropertiesStack { get; set; }
     public List<Property> Properties         {
       get {
@@ -56,7 +64,7 @@ digraph G {
     }
     public List<Association> Associations    { get; internal set; }
     
-    public Class() {
+    public Class() : base() {
       this.PropertiesStack = new Stack<Property>();
       this.Associations    = new List<Association>();
     }
@@ -77,14 +85,14 @@ digraph G {
       // Class [
       //   label = "{Class|+ property : type\l ... |+ method() : void\l}"
       // ]
-      return "  " + this.Name.Replace("-", "_") + " [\n    label = \"{" + this.Name + "|" +
+      return "  " + this.Id + " [\n    label = \"{" + this.Name + "|" +
         string.Join("", this.Properties.Select(p => p.Dotify())) + 
         "}\"\n  ]\n" +
         string.Join("\n", this.Associations.Select(a => a.Dotify())) + "\n";  
     }
   }
   
-  class Property {
+  class Property : Dottable {
     public string Name                    { get; internal set; }
     public string Type                    { get; internal set; }
     public bool   Signed                  { get; internal set; }
@@ -99,9 +107,9 @@ digraph G {
     }  
   }
 
-  class Association {
+  class Association : Dottable {
     public Class Source                   { get; internal set; }
-    public string Target                  { get; internal set; }
+    public Class Target                   { get; internal set; }
     public string Multiplicity            { get; internal set; }
     public string DependsOn               { get; internal set; }
     public override string ToString() {
@@ -113,8 +121,7 @@ digraph G {
 
     public string Dotify() {
       if(this.Target == null) { return ""; } 
-      return "  " + this.Source.Name.Replace("-", "_") +
-             " -> " + this.Target.Replace("-", "_");
+      return "  " + this.Source.Id + " -> " + this.Target.Id;
     }
   }
 
@@ -192,6 +199,14 @@ digraph G {
     Stack<Class> classes = new Stack<Class>();
     Stack<int>   levels  = new Stack<int>();
 
+    private Class GetMostRecentClass(string name) {
+      if(name == null) { return null; }
+      foreach(Class clazz in this.classes) {
+        if( clazz.Name.Equals(name) ) { return clazz; }
+      }
+      return null;
+    }
+
     private void Import(Imported imported) {
       if( levels.Count == 0 ) { levels.Push(0); } // lazy init
 
@@ -209,8 +224,10 @@ digraph G {
 
         // add association to this new class on the current class, unless its 
         // the first one
+        Class clazz = new Class() { Name  = imported.Name };
         if( classes.Count > 0 ) {
           if( imported.Redefines != null ) {
+            Class redefining = new Class() { Name = imported.Redefines };
             // TODO we only deal with redefines of the last property, check!
             if( classes.Peek().PropertiesStack.Count > 0 &&
                 classes.Peek().PropertiesStack.Peek().Name
@@ -221,25 +238,23 @@ digraph G {
               classes.Peek().PropertiesStack.Pop();                    // - prop
               classes.Peek().Associations.Add( new Association() {     // + asso
                 Source = classes.Peek(),
-                Target = imported.Redefines
+                Target = redefining
               });
-              classes.Push(new Class() { Name = imported.Redefines }); // + base
+              classes.Push(redefining); // + base
             }
           } else {
             classes.Peek().Associations.Add(new Association() {
               Source       = classes.Peek(),
-              Target       = imported.Name,
+              Target       = clazz,
               Multiplicity = imported.Multiplicity,
               DependsOn    = imported.AmountDependsOn
             });
           }
         }
         // add this class
+        clazz.Super = this.GetMostRecentClass(imported.Redefines);
         levels.Push(imported.Level);
-        classes.Push(new Class() {
-          Name  = imported.Name,
-          Super = imported.Redefines != null ? imported.Redefines : null
-        });
+        classes.Push(clazz);
       } else {
         // Property
         if( ! imported.IsFiller ) {
