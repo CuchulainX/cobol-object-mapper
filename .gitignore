@@ -2,3 +2,4 @@ tmp
 .build
 bin
 obj
+TestResult.xml
