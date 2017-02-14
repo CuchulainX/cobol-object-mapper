@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Cobol_Object_Mapper {
 
-  class Model {
+  public class Model {
     public List<Class> Classes               { get; internal set; }
     public Model() {
       this.Classes = new List<Class>();
@@ -45,7 +45,7 @@ digraph G {
     }
   }
 
-  abstract class Dottable {
+  public abstract class Dottable {
     private static int count = 0;
     public string Id { get; private set; }
     public Dottable() {
@@ -53,7 +53,7 @@ digraph G {
     }
   }
 
-  class Class : Dottable {
+  public class Class : Dottable {
     public string Name                       { get; internal set; }
     public Class Super                       { get; internal set; }
     internal Stack<Property> PropertiesStack { get; set; }
@@ -92,7 +92,7 @@ digraph G {
     }
   }
   
-  class Property : Dottable {
+  public class Property : Dottable {
     public string Name                    { get; internal set; }
     public string Type                    { get; internal set; }
     public bool   Signed                  { get; internal set; }
@@ -112,7 +112,7 @@ digraph G {
     }  
   }
 
-  class Association : Dottable {
+  public class Association : Dottable {
     public Class Source                   { get; internal set; }
     public Class Target                   { get; internal set; }
     public string Multiplicity            { get; internal set; }
@@ -141,7 +141,7 @@ digraph G {
     }
   }
 
-  class Mapper {
+  public class Mapper {
     public Model Model                    { get; private set; }
     
     public Mapper() {
