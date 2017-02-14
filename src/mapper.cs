@@ -37,7 +37,7 @@ digraph G {
   
 " +
         string.Join("\n", this.Classes.Select(c => c.Dotify()).ToList()) + "\n" +
-        "  edge [ arrowhead = empty ]\n" +
+        "  edge [ arrowhead = empty headlabel =\"\"]\n" +
         string.Join("\n", this.Classes.Select(
           c => (c.Super != null ? "  " + c.Id + " -> " + c.Super.Id : "")
         ).ToList()) +
@@ -120,8 +120,19 @@ digraph G {
     }
 
     public string Dotify() {
-      if(this.Target == null) { return ""; } 
-      return "  " + this.Source.Id + " -> " + this.Target.Id;
+      if(this.Target == null) { return ""; }
+      string dot = "";
+      dot += "  edge [\n";
+      if(this.Multiplicity != null) {
+        dot += "    headlabel = \"" + this.Multiplicity + "    \"\n";
+        if(this.DependsOn != null) {
+          dot += " label = \"" + this.DependsOn + "\"";
+        }
+      } else {
+        dot += "    headlabel = \"\" label =\"\" \n";
+      }
+      dot += "  ]\n";
+      return dot + "  " + this.Source.Id + " -> " + this.Target.Id;
     }
   }
 
