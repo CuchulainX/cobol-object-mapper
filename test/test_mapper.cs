@@ -59,7 +59,7 @@ namespace Cobol_Object_Mapper {
         ",
         @"
 - CLASS
-  - PROPERTY : integer
+  - PROPERTY : integer(1)
       ");
     }
 
@@ -72,7 +72,7 @@ namespace Cobol_Object_Mapper {
         ",
         @"
 - CLASS
-  - PROPERTY : signed integer
+  - PROPERTY : signed integer(2)
       ");
     }
 
@@ -85,7 +85,7 @@ namespace Cobol_Object_Mapper {
         ",
         @"
 - CLASS
-  - PROPERTY : signed float
+  - PROPERTY : signed float(2,1)
       ");
     }
 
@@ -98,7 +98,7 @@ namespace Cobol_Object_Mapper {
         ",
         @"
 - CLASS
-  - PROPERTY : string
+  - PROPERTY : string(3)
       ");
     }
 
@@ -213,9 +213,9 @@ namespace Cobol_Object_Mapper {
         ",
         @"
 - DATA1 : DATA
-  - NUMBERS : integer
+  - NUMBERS : integer(1)
 - DATA2 : DATA
-  - CHARACTERS : string
+  - CHARACTERS : char
 - DATA
 - CLASS
   -> DATA
