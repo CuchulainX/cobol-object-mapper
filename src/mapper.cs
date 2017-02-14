@@ -96,13 +96,18 @@ digraph G {
     public string Name                    { get; internal set; }
     public string Type                    { get; internal set; }
     public bool   Signed                  { get; internal set; }
+    public string Stereotype              { get; internal set; }
     public override string ToString() {
-      return "  - " + this.Name + " : " +
+      return "  - " +
+        ( this.Stereotype != null ? "<<" + this.Stereotype + ">>" : "") +
+        this.Name + " : " +
         ( this.Signed ? "signed " : "") + this.Type;
     }
 
     public string Dotify() {
-      return "+ " + this.Name + " : " +
+      return "+ " +
+        ( this.Stereotype != null ? "&lt;&lt;" + this.Stereotype + "&gt;&gt;" : "") +
+        this.Name + " : " +
         ( this.Signed ? "signed " : "") + this.Type + "\\l";
     }  
   }
@@ -205,6 +210,14 @@ digraph G {
                  (this.MaxAmount > 0 ? ".." + this.MaxAmount.ToString() : "");
         }
       }
+      public string Stereotype {
+        get {
+          if( this.CompLevel > 0 ) {
+            return "comp-" + this.CompLevel.ToString();
+          }
+          return null;
+        }
+      }
     }
 
     Stack<Class> classes = new Stack<Class>();
@@ -270,9 +283,10 @@ digraph G {
         // Property
         if( ! imported.IsFiller ) {
           classes.Peek().PropertiesStack.Push(new Property() {
-            Name   = imported.Name,
-            Type   = imported.Type,
-            Signed = imported.TypeIsSigned
+            Name       = imported.Name,
+            Type       = imported.Type,
+            Signed     = imported.TypeIsSigned,
+            Stereotype = imported.Stereotype
           });
         }
       }
