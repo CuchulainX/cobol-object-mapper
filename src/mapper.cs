@@ -192,7 +192,8 @@ digraph G {
       public int          Amount            { get; set; }
       public int          MaxAmount         { get; set; }
       public string       AmountDependsOn   { get; set; }
-      public string       Type              { get; set; }
+      public bool         IsNumeric         { get; set; }
+      public bool         IsTyped           { get; set; }
       public int          TypeLength        { get; set; }
       public bool         TypeIsSigned      { get; set; }
       public int          TypeDecimalLength { get; set; }
@@ -203,6 +204,34 @@ digraph G {
       public bool IsClass {
         get { return ! this.IsFiller && this.Type == null; }
       }
+      public string Type {
+        get {
+          if( ! this.IsTyped ) { return null; }
+          string type = "";
+          if( this.IsNumeric ) {
+            if( this.TypeIsSigned ) { type += "signed "; }
+            if( this.TypeDecimalLength > 0 ) {
+              type += "float";
+              } else {
+              type += "integer";
+            }
+          } else {
+            type += "string";
+          }
+          if( this.TypeLength > 0 ) {
+            type += "(" + this.TypeLength.ToString();
+            if( this.TypeDecimalLength > 0) {
+              type += "," + this.TypeDecimalLength.ToString();
+            }
+            type += ")";
+          }
+          // rewrite some common type-patterns
+          if( type.Equals("string(1)") ) { type = "char"; }
+
+          return type;
+        }
+      }
+
       public string Multiplicity {
         get {
           return this.Amount + this.MaxAmount == 0 ? null :
@@ -484,26 +513,29 @@ digraph G {
     private void ImportPictureFormatOption(Option anyOption, Imported imported) {
       PictureFormatOption option = anyOption as PictureFormatOption;
 
-      // alphabetic or alphanumeric
-      if(option.Type.StartsWith("A") || option.Type.StartsWith("X")) {
-        imported.Type = "string";
-        if(option.Digits != null) {
-          imported.TypeLength = Int32.Parse(option.Digits.Value);
-        }
-      } else {
-        // numeric
-        if(option.Type.StartsWith("S")) {
-          imported.TypeIsSigned = true;
-        }
-        if(option.DecimalType == null) {
-          imported.Type = "integer";
-        } else {
-          imported.Type = "float";
-          if(option.DecimalDigits != null) {
-            imported.TypeDecimalLength = Int32.Parse(option.DecimalDigits.Value);
-          }
-        }
+      if(option.Digits != null) {
+        imported.TypeLength = Int32.Parse(option.Digits.Value);
       }
+
+      if(option.DecimalDigits != null) {
+        imported.TypeDecimalLength = Int32.Parse(option.DecimalDigits.Value);
+      }
+
+      imported.IsNumeric =
+        ! ( option.Type.StartsWith("A") || option.Type.StartsWith("X") );
+
+      imported.TypeIsSigned = option.Type.StartsWith("S");
+      
+      // analyse PIC formatting for length
+      if(imported.TypeLength == 0) {
+        imported.TypeLength = option.Type.Length;
+      }
+
+      if(imported.TypeDecimalLength == 0 && option.DecimalType != null) {
+        imported.TypeDecimalLength = option.DecimalType.Length;
+      }
+
+      imported.IsTyped = true;
     }
 
   }
