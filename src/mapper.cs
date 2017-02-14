@@ -72,7 +72,7 @@ digraph G {
     public override string ToString() {
       return
         "- " + this.Name +
-        ( this.Super != null ? " : " + this.Super : "" ) + 
+        ( this.Super != null ? " : " + this.Super.Name : "" ) + 
         ( this.Properties.Count > 0 ?
           "\n" + string.Join("\n", this.Properties.Select(p => p.ToString())) 
           : "" ) + 
@@ -113,7 +113,7 @@ digraph G {
     public string Multiplicity            { get; internal set; }
     public string DependsOn               { get; internal set; }
     public override string ToString() {
-      return "  -> " + this.Target +
+      return "  -> " + this.Target.Name +
         ( this.Multiplicity == null ? "" :
           "[" + this.Multiplicity + "]" +
           ( this.DependsOn == null ? "" : "(" + this.DependsOn + ")" ));
