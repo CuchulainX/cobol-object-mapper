@@ -100,8 +100,7 @@ digraph G {
     public override string ToString() {
       return "  - " +
         ( this.Stereotype != null ? "<<" + this.Stereotype + ">>" : "") +
-        this.Name + " : " +
-        ( this.Signed ? "signed " : "") + this.Type;
+        this.Name + " : " + this.Type;
     }
 
     public string Dotify() {
