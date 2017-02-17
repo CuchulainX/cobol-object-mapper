@@ -450,7 +450,7 @@ public class Parser {
     this.source = new Parsable(source);
     this.AST    = this.ParseCopybook();
     if( ! this.source.IsDone ) {
-      throw this.source.GenerateParseException("Could not parse");
+      throw this.source.GenerateParseException("Could not parse remaining data");
     }
     return this;
   }
@@ -572,7 +572,7 @@ public class Parser {
     try {
       identifier = this.ParseIdentifier();
       {
-        int pos796 = this.source.position;
+        int pos563 = this.source.position;
         try {
           try {
             this.source.Consume("THRU");
@@ -587,7 +587,7 @@ public class Parser {
           }
           through = this.ParseIdentifier();
         } catch(ParseException) {
-          this.source.position = pos796;
+          this.source.position = pos563;
         }
       }
     } catch(ParseException e) {
@@ -612,7 +612,7 @@ public class Parser {
       levelName = this.ParseLevelName();
       this.source.Consume("VALUES");
       {
-        int pos707 = this.source.position;
+        int pos146 = this.source.position;
         try {
           try {
             this.source.Consume("IS");
@@ -626,7 +626,7 @@ public class Parser {
             }
           }
         } catch(ParseException) {
-          this.source.position = pos707;
+          this.source.position = pos146;
         }
       }
       {
@@ -714,13 +714,13 @@ public class Parser {
     try {
       identifier = this.ParseIdentifier();
       {
-        int pos565 = this.source.position;
+        int pos383 = this.source.position;
         try {
           this.source.Consume("(");
           subset = this.ParseSubset();
           this.source.Consume(")");
         } catch(ParseException) {
-          this.source.position = pos565;
+          this.source.position = pos383;
         }
       }
     } catch(ParseException e) {
@@ -743,12 +743,12 @@ public class Parser {
     try {
       limit = this.ParseNumeric();
       {
-        int pos938 = this.source.position;
+        int pos799 = this.source.position;
         try {
           this.source.Consume(":");
           next = this.ParseSubset();
         } catch(ParseException) {
-          this.source.position = pos938;
+          this.source.position = pos799;
         }
       }
     } catch(ParseException e) {
@@ -905,11 +905,11 @@ public class Parser {
     int pos = this.source.position;
     try {
       {
-        int pos712 = this.source.position;
+        int pos674 = this.source.position;
         try {
           this.source.Consume("IS");
         } catch(ParseException) {
-          this.source.position = pos712;
+          this.source.position = pos674;
         }
       }
       this.source.Consume("EXTERNAL");
@@ -928,11 +928,11 @@ public class Parser {
     int pos = this.source.position;
     try {
       {
-        int pos21 = this.source.position;
+        int pos36 = this.source.position;
         try {
           this.source.Consume("IS");
         } catch(ParseException) {
-          this.source.position = pos21;
+          this.source.position = pos36;
         }
       }
       this.source.Consume("INTERNAL");
@@ -952,19 +952,19 @@ public class Parser {
     int pos = this.source.position;
     try {
       {
-        int pos523 = this.source.position;
+        int pos664 = this.source.position;
         try {
           this.source.Consume("USAGE");
           {
-            int pos57 = this.source.position;
+            int pos300 = this.source.position;
             try {
               this.source.Consume("IS");
             } catch(ParseException) {
-              this.source.position = pos57;
+              this.source.position = pos300;
             }
           }
         } catch(ParseException) {
-          this.source.position = pos523;
+          this.source.position = pos664;
         }
       }
       usage = this.ParseUsage();
@@ -987,11 +987,11 @@ public class Parser {
     try {
       this.source.Consume("SIGN");
       {
-        int pos913 = this.source.position;
+        int pos296 = this.source.position;
         try {
           this.source.Consume("IS");
         } catch(ParseException) {
-          this.source.position = pos913;
+          this.source.position = pos296;
         }
       }
       try {
@@ -1008,21 +1008,21 @@ public class Parser {
         }
       }
       {
-        int pos491 = this.source.position;
+        int pos347 = this.source.position;
         try {
           this.source.Consume("SEPARATE");
           hasSeparate = true;
           {
-            int pos220 = this.source.position;
+            int pos289 = this.source.position;
             try {
               this.source.Consume("CHARACTER");
               hasCharacter = true;
             } catch(ParseException) {
-              this.source.position = pos220;
+              this.source.position = pos289;
             }
           }
         } catch(ParseException) {
-          this.source.position = pos491;
+          this.source.position = pos347;
         }
       }
     } catch(ParseException e) {
@@ -1051,37 +1051,37 @@ public class Parser {
       this.source.Consume("OCCURS");
       amount = this.ParseNumeric();
       {
-        int pos567 = this.source.position;
+        int pos690 = this.source.position;
         try {
           this.source.Consume("TO");
           upperBound = this.ParseNumeric();
         } catch(ParseException) {
-          this.source.position = pos567;
+          this.source.position = pos690;
         }
       }
       {
-        int pos640 = this.source.position;
+        int pos682 = this.source.position;
         try {
           this.source.Consume("TIMES");
         } catch(ParseException) {
-          this.source.position = pos640;
+          this.source.position = pos682;
         }
       }
       {
-        int pos474 = this.source.position;
+        int pos480 = this.source.position;
         try {
           this.source.Consume("DEPENDING");
           {
-            int pos72 = this.source.position;
+            int pos99 = this.source.position;
             try {
               this.source.Consume("ON");
             } catch(ParseException) {
-              this.source.position = pos72;
+              this.source.position = pos99;
             }
           }
           dependsOn = this.ParseIdentifier();
         } catch(ParseException) {
-          this.source.position = pos474;
+          this.source.position = pos480;
         }
       }
       {
@@ -1129,15 +1129,15 @@ public class Parser {
     try {
       this.source.Consume("SYNC");
       {
-        int pos879 = this.source.position;
+        int pos416 = this.source.position;
         try {
           this.source.Consume("HRONIZED");
         } catch(ParseException) {
-          this.source.position = pos879;
+          this.source.position = pos416;
         }
       }
       {
-        int pos886 = this.source.position;
+        int pos121 = this.source.position;
         try {
           try {
             this.source.Consume("LEFT");
@@ -1153,7 +1153,7 @@ public class Parser {
             }
           }
         } catch(ParseException) {
-          this.source.position = pos886;
+          this.source.position = pos121;
         }
       }
     } catch(ParseException e) {
@@ -1175,20 +1175,20 @@ public class Parser {
     try {
       this.source.Consume("JUST");
       {
-        int pos986 = this.source.position;
+        int pos100 = this.source.position;
         try {
           this.source.Consume("IFIED");
         } catch(ParseException) {
-          this.source.position = pos986;
+          this.source.position = pos100;
         }
       }
       {
-        int pos553 = this.source.position;
+        int pos983 = this.source.position;
         try {
           this.source.Consume("RIGHT");
           hasRight = true;
         } catch(ParseException) {
-          this.source.position = pos553;
+          this.source.position = pos983;
         }
       }
     } catch(ParseException e) {
@@ -1208,11 +1208,11 @@ public class Parser {
     try {
       this.source.Consume("BLANK");
       {
-        int pos992 = this.source.position;
+        int pos327 = this.source.position;
         try {
           this.source.Consume("WHEN");
         } catch(ParseException) {
-          this.source.position = pos992;
+          this.source.position = pos327;
         }
       }
       this.source.Consume("ZERO");
@@ -1233,11 +1233,11 @@ public class Parser {
     try {
       this.source.Consume("VALUE");
       {
-        int pos813 = this.source.position;
+        int pos956 = this.source.position;
         try {
           this.source.Consume("IS");
         } catch(ParseException) {
-          this.source.position = pos813;
+          this.source.position = pos956;
         }
       }
       symbolic = this.ParseSymbolic();
@@ -1285,35 +1285,35 @@ public class Parser {
     try {
       this.source.Consume("PIC");
       {
-        int pos909 = this.source.position;
+        int pos420 = this.source.position;
         try {
           this.source.Consume("TURE");
         } catch(ParseException) {
-          this.source.position = pos909;
+          this.source.position = pos420;
         }
       }
       {
-        int pos457 = this.source.position;
+        int pos498 = this.source.position;
         try {
           this.source.Consume("IS");
         } catch(ParseException) {
-          this.source.position = pos457;
+          this.source.position = pos498;
         }
       }
       type = this.source.Consume(Extracting.PictureType);
       {
-        int pos290 = this.source.position;
+        int pos563 = this.source.position;
         try {
           digits = this.ParseIndexer();
         } catch(ParseException) {
-          this.source.position = pos290;
+          this.source.position = pos563;
         }
       }
       {
-        int pos628 = this.source.position;
+        int pos427 = this.source.position;
         try {
           {
-            int pos953 = this.source.position;
+            int pos808 = this.source.position;
             try {
               try {
                 this.source.Consume("V");
@@ -1327,20 +1327,20 @@ public class Parser {
                 }
               }
             } catch(ParseException) {
-              this.source.position = pos953;
+              this.source.position = pos808;
             }
           }
           decimalType = this.source.Consume(Extracting.DecimalPictureType);
           {
-            int pos701 = this.source.position;
+            int pos721 = this.source.position;
             try {
               decimalDigits = this.ParseIndexer();
             } catch(ParseException) {
-              this.source.position = pos701;
+              this.source.position = pos721;
             }
           }
         } catch(ParseException) {
-          this.source.position = pos628;
+          this.source.position = pos427;
         }
       }
     } catch(ParseException e) {
@@ -1364,19 +1364,19 @@ public class Parser {
     try {
       this.source.Consume("PIC");
       {
-        int pos728 = this.source.position;
+        int pos312 = this.source.position;
         try {
           this.source.Consume("TURE");
         } catch(ParseException) {
-          this.source.position = pos728;
+          this.source.position = pos312;
         }
       }
       {
-        int pos685 = this.source.position;
+        int pos513 = this.source.position;
         try {
           this.source.Consume("IS");
         } catch(ParseException) {
-          this.source.position = pos685;
+          this.source.position = pos513;
         }
       }
       text = this.ParseString();
@@ -1467,20 +1467,20 @@ public class Parser {
     try {
       this.source.Consume("COMP");
       {
-        int pos532 = this.source.position;
+        int pos293 = this.source.position;
         try {
           this.source.Consume("UTATIONAL");
         } catch(ParseException) {
-          this.source.position = pos532;
+          this.source.position = pos293;
         }
       }
       {
-        int pos981 = this.source.position;
+        int pos912 = this.source.position;
         try {
           this.source.Consume("-");
           level = this.source.Consume(Extracting.Digit);
         } catch(ParseException) {
-          this.source.position = pos981;
+          this.source.position = pos912;
         }
       }
     } catch(ParseException e) {
@@ -1560,19 +1560,19 @@ public class Parser {
         }
       }
       {
-        int pos49 = this.source.position;
+        int pos773 = this.source.position;
         try {
           this.source.Consume("KEY");
         } catch(ParseException) {
-          this.source.position = pos49;
+          this.source.position = pos773;
         }
       }
       {
-        int pos509 = this.source.position;
+        int pos72 = this.source.position;
         try {
           this.source.Consume("IS");
         } catch(ParseException) {
-          this.source.position = pos509;
+          this.source.position = pos72;
         }
       }
       {
@@ -1606,11 +1606,11 @@ public class Parser {
     try {
       this.source.Consume("INDEXED");
       {
-        int pos504 = this.source.position;
+        int pos909 = this.source.position;
         try {
           this.source.Consume("BY");
         } catch(ParseException) {
-          this.source.position = pos504;
+          this.source.position = pos909;
         }
       }
       identifier = this.ParseIdentifier();
@@ -1699,11 +1699,11 @@ public class Parser {
     try {
       this.source.Consume("ZERO");
       {
-        int pos188 = this.source.position;
+        int pos498 = this.source.position;
         try {
           this.source.Consume("ES");
         } catch(ParseException) {
-          this.source.position = pos188;
+          this.source.position = pos498;
         }
       }
     } catch(ParseException e) {
@@ -1722,11 +1722,11 @@ public class Parser {
     try {
       this.source.Consume("SPACE");
       {
-        int pos720 = this.source.position;
+        int pos863 = this.source.position;
         try {
           this.source.Consume("S");
         } catch(ParseException) {
-          this.source.position = pos720;
+          this.source.position = pos863;
         }
       }
     } catch(ParseException e) {
@@ -1745,11 +1745,11 @@ public class Parser {
     try {
       this.source.Consume("HIGH-VALUE");
       {
-        int pos872 = this.source.position;
+        int pos293 = this.source.position;
         try {
           this.source.Consume("S");
         } catch(ParseException) {
-          this.source.position = pos872;
+          this.source.position = pos293;
         }
       }
     } catch(ParseException e) {
@@ -1768,11 +1768,11 @@ public class Parser {
     try {
       this.source.Consume("LOW-VALUE");
       {
-        int pos898 = this.source.position;
+        int pos507 = this.source.position;
         try {
           this.source.Consume("S");
         } catch(ParseException) {
-          this.source.position = pos898;
+          this.source.position = pos507;
         }
       }
     } catch(ParseException e) {
@@ -1809,11 +1809,11 @@ public class Parser {
     try {
       this.source.Consume("NULL");
       {
-        int pos672 = this.source.position;
+        int pos677 = this.source.position;
         try {
           this.source.Consume("S");
         } catch(ParseException) {
-          this.source.position = pos672;
+          this.source.position = pos677;
         }
       }
     } catch(ParseException e) {

@@ -45,7 +45,16 @@ namespace Cobol_Object_Mapper {
 
       Console.Error.WriteLine("*** Mapping...");
       Mapper mapper = new Mapper();
-      mapper.Parse(input);
+      try {
+        mapper.Parse(input);
+      } catch(ParseException e) {
+        // recurse down the Exception tree, to reach the most specific one
+        while(e.InnerException != null) {
+          e = e.InnerException as ParseException;
+        } 
+        Console.Error.WriteLine(e.Message);
+        return;
+      }
 
       if(dot) {
         Console.Error.WriteLine("*** Dumping Dot format");
