@@ -35,7 +35,12 @@ public class Parsable {
   }
   
   // helper Regular Expressions for general clean-up
-  private static Regex leadingWhitespace = new Regex( "^\\s" );
+  // this regular expression only matches NOT printable characters minus space
+  // ASCII range goes from 0-127
+  // 0-31 are non printable (including newline, carriage return, EOF,...)
+  // 127 is DEL is another non printable
+  // 32 is space is normal whitespace we also want to ignore
+  private static Regex leadingWhitespace = new Regex( @"^[^\u0021-\u007E]" );
 
   public Parsable(string text) {
     this.text = text;
@@ -43,7 +48,7 @@ public class Parsable {
 
   public string Context {
     get {
-      return (this.Peek(30) + "[...]").Replace("\n", "\\n");
+      return "position " + this.position.ToString() + "\n..X\n  " + (this.Peek(80).Trim() + " [...]");
     }
   }
 
@@ -96,12 +101,8 @@ public class Parsable {
     return this.head.Substring(0, Math.Min(amount, this.head.Length));
   }
 
-  public ParseException GenerateParseException(string message) {
-    return new ParseException( message + " at " + this.Context );
-  }
-
-  public ParseException GenerateParseException(string message, Exception inner) {
-    return new ParseException( message + "\n  Context:" + this.Context + "\n", inner );
+  public ParseException GenerateParseException(string message, Exception inner=null) {
+    return new ParseException( message + " at " + this.Context, inner );
   }
 
   public bool IsDone {
