@@ -4,3 +4,4 @@ bin
 obj
 TestResult.xml
 .DS_Store
+.vs/cobol-object-mapper.csproj.dtbcache.json
